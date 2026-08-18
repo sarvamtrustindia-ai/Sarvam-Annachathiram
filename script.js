@@ -5,7 +5,7 @@
   IMPORTANT:
   After deploying Google Apps Script, paste the /exec URL below.
 */
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdjrzfXwVWfjn_6DcGIT3ug9IT_rNtHX953Y4A8YQkp6kRFQrcYuvFUNUEyW5rSK5WRg/exec";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFh27dJwTRqULWDJhjKBWzklNNblWITO9mFPmpapc123eMEsbdIdZomZPIif9iRpaprg/exec";
 
 const STORAGE_KEYS = {
   occasions: "sarvamCustomOccasions",
@@ -63,6 +63,7 @@ function bindEvents() {
 
   document.getElementById("printBookingBtn").addEventListener("click", printBooking);
   document.getElementById("refreshBookingsBtn").addEventListener("click", loadBookings);
+  document.getElementById("bookingsTableBody").addEventListener("click", handleReceiptAction);
 
   document.querySelectorAll("#bookingForm input, #bookingForm select").forEach((field) => {
     field.addEventListener("input", () => clearFieldError(field.name || field.id));
@@ -348,7 +349,7 @@ function updateDashboard() {
 
   if (!filtered.length) {
     body.innerHTML =
-      '<tr><td colspan="9" class="empty-state">No bookings found.</td></tr>';
+      '<tr><td colspan="10" class="empty-state">No bookings found.</td></tr>';
   } else {
     body.innerHTML = filtered
       .map(
@@ -367,7 +368,16 @@ function updateDashboard() {
               </span>
             </td>
             <td>${escapeHtml(booking.notes || "-")}</td>
-          </tr>
+            <td class="booking-action-cell">
+            <button
+              type="button"
+              class="receipt-btn"
+              data-booking-id="${escapeHtml(booking.bookingId || "")}"
+              title="Generate receipt"
+            >
+              Download Receipt
+            </button>
+          </td>
         `
       )
       .join("");
@@ -474,7 +484,7 @@ function renderTodaysSponsor(todayISO) {
   }
 
   // Sort by meal order: Breakfast → Lunch → Dinner
-  const sessionOrder = { "Breakfast": 1, "Lunch": 2, "Dinner": 3 };
+  const sessionOrder = { "Breakfast": 1, "Lunch": 2, "Dinner": 3,"Twice": 4, "Whole Day": 5 };
   todayBookings.sort(
     (a, b) => (sessionOrder[a.foodSession] || 99) - (sessionOrder[b.foodSession] || 99)
   );
@@ -500,6 +510,52 @@ function renderTodaysSponsor(todayISO) {
      Secretary signature (bottom-left).
    ─ Logo path reuses the same "Sarvam Logo.png" already in the project.
 ───────────────────────────────────────────────────────────────────── */
+function handleReceiptAction(event) {
+  const button = event.target.closest(".receipt-btn");
+
+  if (!button) return;
+
+  const bookingId = button.dataset.bookingId;
+
+  if (!bookingId) {
+    showMessage("Booking ID is missing.", "error");
+    return;
+  }
+
+  const booking = allBookings.find(
+    (item) => String(item.bookingId) === String(bookingId)
+  );
+
+  if (!booking) {
+    showMessage(
+      "Booking could not be found. Please refresh the bookings.",
+      "error"
+    );
+    return;
+  }
+
+  generateReceiptForBooking(booking);
+}
+
+function generateReceiptForBooking(booking) {
+  Promise.all([
+    fetchImageAsBase64("Sarvam Logo.png"),
+    fetchImageAsBase64("Logo.png")
+  ])
+    .then(([headerB64, wmB64]) => {
+      openPrintWindow(booking, headerB64, wmB64);
+    })
+    .catch(() => {
+      fetchImageAsBase64("Sarvam Logo.png")
+        .then((headerB64) => {
+          openPrintWindow(booking, headerB64, "");
+        })
+        .catch(() => {
+          openPrintWindow(booking, "", "");
+        });
+    });
+}
+
 function printBooking() {
   if (!lastSavedBooking) {
     showMessage("No saved booking available to print.", "error");
@@ -685,7 +741,8 @@ function openPrintWindow(b, headerLogoB64, watermarkB64) {
       </tr>
       <tr><td class="field-label">Notes</td><td>${escapeHtml(b.notes || "—")}</td></tr>
     </table>
-
+    <div class="tax-exemption">80g - Tax Exemption is Available for your Donations</div>
+    <br>
     <div class="thank-you">Thank you for your generous support of Sarvam Annachathiram. 🙏</div>
 
      <div class="signature-block">

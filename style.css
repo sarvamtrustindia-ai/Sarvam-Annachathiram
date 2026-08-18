@@ -729,6 +729,8 @@ tbody td:nth-child(5):not(:empty) {
 .ts-session--breakfast { background: #fff3e0; color: #e65100; }
 .ts-session--lunch     { background: #e8f5e9; color: #1b5e20; }
 .ts-session--dinner    { background: #e8eaf6; color: #283593; }
+.ts-session--twice     { background: #f3e5f5; color: #7b1fa2; }
+.ts-session--whole-day { background: #e0f2f1; color: #790061; }
 
 .ts-no-sponsor { color: rgba(255,255,255,0.55); font-style: italic; }
 .ts-loading    { color: rgba(255,255,255,0.55); font-style: italic; }
@@ -736,4 +738,29 @@ tbody td:nth-child(5):not(:empty) {
 @media (max-width: 680px) {
   .ts-ticker-bar { font-size: 0.76rem; padding: 4px 10px; }
   .ts-ticker-label { font-size: 0.65rem; }
-} depends on
+}
+.booking-action-cell {
+  white-space: nowrap;
+}
+
+.receipt-btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: var(--green-700);
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+.receipt-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.receipt-btn:active {
+  transform: translateY(0);
+}
