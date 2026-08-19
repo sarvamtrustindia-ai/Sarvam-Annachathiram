@@ -6,7 +6,6 @@
  * Setup steps:
  * 1. Create a sheet named exactly "Sponsor" in your spreadsheet.
  * 2. Run setupSponsorSheet() once from the Apps Script editor.
- * 3. Run installChangeTrigger() once to enable deletion sync.
  *
  * Sponsor ID logic:
  *   - Each unique sponsor (name + phone) gets a permanent ID like SP001, SP002 ...
@@ -21,59 +20,9 @@ function setupSponsorSheet() {
   if (!sheet) {
     throw new Error('"Sponsor" sheet not found. Please create it manually first.');
   }
-  installChangeTrigger();
   refreshSponsorSheet();
   Logger.log("SUCCESS: Sponsor sheet is ready.");
 }
-
-// ─────────────────────────────────────────────
-// INSTALL onChange TRIGGER (run once)
-// ─────────────────────────────────────────────
-
-function installChangeTrigger() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-
-  // Remove any existing onChange triggers to avoid duplicates
-  var triggers = ScriptApp.getProjectTriggers();
-  for (var i = 0; i < triggers.length; i++) {
-    if (triggers[i].getHandlerFunction() === "onChange") {
-      ScriptApp.deleteTrigger(triggers[i]);
-    }
-  }
-
-  // Install a fresh one
-  ScriptApp.newTrigger("onChange")
-    .forSpreadsheet(ss)
-    .onChange()
-    .create();
-
-  Logger.log("onChange trigger installed.");
-}
-
-// ─────────────────────────────────────────────
-// ON EDIT — catches cell edits in Bookings
-// ─────────────────────────────────────────────
-
-function onEdit(e) {
-  if (!e || !e.range) return;
-  if (e.range.getSheet().getName() === "Bookings") {
-    refreshSponsorSheet();
-  }
-}
-
-// ─────────────────────────────────────────────
-// ON CHANGE — catches row deletions/insertions
-// Installed as an installable trigger via installChangeTrigger()
-// ─────────────────────────────────────────────
-
-function onChange(e) {
-  if (!e) return;
-  refreshSponsorSheet();
-}
-
-// ─────────────────────────────────────────────
-// MAIN REFRESH FUNCTION
-// ─────────────────────────────────────────────
 
 function refreshSponsorSheet() {
   var ss           = SpreadsheetApp.getActiveSpreadsheet();
@@ -108,8 +57,6 @@ function refreshSponsorSheet() {
   var lastRow = bookingSheet.getLastRow();
   if (lastRow < 2) {
     // Clear and write headers only.
-    sponsorSheet.clearContents();
-    sponsorSheet.clearFormats();
     writeHeaders(sponsorSheet);
     Logger.log("No bookings found.");
     return;
@@ -208,10 +155,6 @@ function refreshSponsorSheet() {
   Logger.log("Sponsor sheet updated: " + outputRows.length + " sponsors.");
 }
 
-// ─────────────────────────────────────────────
-// WRITE HEADERS
-// ─────────────────────────────────────────────
-
 function writeHeaders(sheet) {
   var headers = [
     "Sponsor ID",
@@ -227,6 +170,18 @@ function writeHeaders(sheet) {
   headerRange.setValues([headers]);
   headerRange.setFontWeight("bold");
   sheet.setFrozenRows(1);
+}
+
+// ─────────────────────────────────────────────
+// ON EDIT — auto-refresh when Bookings changes
+// ─────────────────────────────────────────────
+
+function onEdit(e) {
+  if (!e || !e.range) return;
+
+  if (e.range.getSheet().getName() === "Bookings") {
+    refreshSponsorSheet();
+  }
 }
 
 // ─────────────────────────────────────────────

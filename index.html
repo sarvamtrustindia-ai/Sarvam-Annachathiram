@@ -30,7 +30,8 @@
       </div>
     </div>
   </header>
-<main class="container">
+
+  <main class="container">
     <section class="card booking-card">
       <div class="section-title">
         <div>
@@ -94,6 +95,13 @@
               <input id="amount" name="amount" type="number" min="1" step="1" placeholder="Enter amount" required>
             </div>
             <small class="field-error" data-error-for="amount"></small>
+          </div>
+
+          <!-- ── PLACE (optional) ── -->
+          <div class="field">
+            <label for="place">Place</label>
+            <input id="place" name="place" type="text" placeholder="e.g. Thiruvannamalai">
+            <small class="field-error" data-error-for="place"></small>
           </div>
 
           <div class="field">
@@ -204,6 +212,7 @@
               <th>Date</th>
               <th>Food Session</th>
               <th>Amount</th>
+              <th>Place</th>
               <th>Volunteer</th>
               <th>Payment Status</th>
               <th>Notes</th>
@@ -212,7 +221,7 @@
           </thead>
           <tbody id="bookingsTableBody">
             <tr class="skeleton-row">
-              <td colspan="10" class="empty-state loading-cell">
+              <td colspan="11" class="empty-state loading-cell">
                 <span class="skeleton-line"></span>
                 <span class="skeleton-line"></span>
                 <span class="skeleton-line"></span>
