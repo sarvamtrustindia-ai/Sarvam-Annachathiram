@@ -3,243 +3,552 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>சர்வம் அன்ன சத்திரம்</title>
+  <title>சர்வம் அன்ன சத்திரம் — Food Sponsorship Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Background Decorative Shapes -->
   <div class="bg-shape bg-shape-one" aria-hidden="true"></div>
   <div class="bg-shape bg-shape-two" aria-hidden="true"></div>
 
-  <header class="site-header">
-    <div class="brand">
-      <img class="brand-logo" src="Sarvam Logo.png" alt="Sarvam logo">
-      <div class="brand-title-wrap">
+  <!-- Toast Notification Message -->
+  <div id="toastMessage" class="message hidden" role="alert"></div>
+
+  <!-- ============================================================ -->
+  <!-- 1. DEDICATED AUTHENTICATION: SIGN IN & CREATE ACCOUNT        -->
+  <!-- ============================================================ -->
+  <div id="loginView" class="auth-page-wrapper">
+    <div class="auth-card-clean">
+      <div class="auth-card-brand">
+        <img class="auth-logo" src="Sarvam Logo.png" alt="Sarvam Logo">
+        <img class="auth-logo" src="Logo.png" alt="Partner Logo">
+      </div>
+      
+      <div class="auth-card-header">
         <h1>சர்வம் அன்ன சத்திரம்</h1>
-        <p>Food Sponsorship Management</p>
-      </div>
-      <img class="brand-logo" src="Logo.png" alt="Partner logo">
-    </div>
-    <!-- TODAY'S SPONSOR TICKER -->
-    <div class="ts-ticker-bar" id="todaysSponsorBar" aria-live="polite">
-      <span class="ts-ticker-label">&#9733; Today's Sponsor:</span>
-      <div class="ts-ticker-track">
-        <span class="ts-ticker-content" id="todaysSponsorContent">Loading…</span>
-      </div>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="card booking-card">
-      <div class="section-title">
-        <div>
-          <h2>Food Sponsorship</h2>
-          <p>Enter the sponsor and sponsorship details below.</p>
-        </div>
+        <p id="authHeaderSub">Food Sponsorship Portal</p>
       </div>
 
-      <form id="bookingForm" novalidate>
-        <div class="form-grid">
-          <div class="field">
-            <label for="sponsorName">Sponsor Name <span>*</span></label>
-            <input id="sponsorName" name="sponsorName" type="text" placeholder="Enter sponsor name" autocomplete="name" required>
-            <small class="field-error" data-error-for="sponsorName"></small>
-          </div>
+      <!-- Segmented Navigation Tabs -->
+      <div class="auth-nav-tabs">
+        <button type="button" class="auth-tab-btn active" id="tabSignInBtn">Sign In</button>
+        <button type="button" class="auth-tab-btn" id="tabSignUpBtn">Create Account</button>
+      </div>
 
-          <div class="field">
-            <label for="sponsorFor">Sponsor For <span>*</span></label>
-            <input id="sponsorFor" name="sponsorFor" type="text" placeholder="Person / family name" required>
-            <small class="field-error" data-error-for="sponsorFor"></small>
-          </div>
+      <!-- Form Error / Success Alert -->
+      <div id="authAlert" class="auth-alert hidden"></div>
 
-          <div class="field">
-            <label for="phone">Phone Number <span>*</span></label>
-            <input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="10-digit mobile number" maxlength="13" required>
-            <small class="field-error" data-error-for="phone"></small>
+      <!-- SIGN IN FORM -->
+      <form id="authLoginForm" novalidate>
+        <div class="auth-field">
+          <label for="loginEmail">Email Address</label>
+          <div class="input-icon-group">
+            <span class="input-icon">✉️</span>
+            <input 
+              id="loginEmail" 
+              name="email" 
+              type="email" 
+              placeholder="Enter your email" 
+              autocomplete="username" 
+              required
+            >
           </div>
-
-          <div class="field">
-            <label for="occasion">Occasion <span>*</span></label>
-            <div class="input-with-button">
-              <select id="occasion" name="occasion" required><option value="">Select Occasion</option></select>
-              <button type="button" class="secondary-btn" id="openOccasionModalBtn">+ Add</button>
-            </div>
-            <small class="field-error" data-error-for="occasion"></small>
-          </div>
-
-          <div class="field">
-            <label for="sponsorshipDate">Sponsorship Date <span>*</span></label>
-            <input id="sponsorshipDate" name="sponsorshipDate" type="date" required>
-            <small class="field-error" data-error-for="sponsorshipDate"></small>
-          </div>
-
-          <div class="field">
-            <label for="foodSession">Food Session <span>*</span></label>
-            <select id="foodSession" name="foodSession" required>
-              <option value="">Select Food Session</option>
-              <option value="Breakfast">Breakfast</option>
-              <option value="Lunch">Lunch</option>
-              <option value="Dinner">Dinner</option>
-              <option value="Twice">Twice</option>
-              <option value="Whole Day">Whole Day</option>
-            </select>
-            <small class="field-error" data-error-for="foodSession"></small>
-          </div>
-
-          <div class="field">
-            <label for="amount">Sponsorship Amount (₹) <span>*</span></label>
-            <div class="currency-input">
-              <span>₹</span>
-              <input id="amount" name="amount" type="number" min="1" step="1" placeholder="Enter amount" required>
-            </div>
-            <small class="field-error" data-error-for="amount"></small>
-          </div>
-
-          <!-- ── PLACE (optional) ── -->
-          <div class="field">
-            <label for="place">Place</label>
-            <input id="place" name="place" type="text" placeholder="e.g. Thiruvannamalai">
-            <small class="field-error" data-error-for="place"></small>
-          </div>
-
-          <div class="field">
-            <label for="volunteer">Volunteer <span>*</span></label>
-            <div class="input-with-button">
-              <select id="volunteer" name="volunteer" required><option value="">Select Volunteer</option></select>
-              <button type="button" class="secondary-btn" id="openVolunteerModalBtn">+ Add</button>
-            </div>
-            <small class="field-error" data-error-for="volunteer"></small>
-          </div>
+          <small class="field-error" id="loginEmailError"></small>
         </div>
 
-        <div class="payment-section">
-          <label>Payment Status <span>*</span></label>
-          <div class="payment-toggle">
-            <label class="payment-option">
-              <input type="radio" name="paymentStatus" value="Paid">
-              <span>Paid</span>
-            </label>
-            <label class="payment-option">
-              <input type="radio" name="paymentStatus" value="Pending">
-              <span>Pending</span>
-            </label>
+        <div class="auth-field">
+          <label for="loginPassword">Password</label>
+          <div class="input-icon-group">
+            <span class="input-icon">🔒</span>
+            <input 
+              id="loginPassword" 
+              name="password" 
+              type="password" 
+              placeholder="Enter your password" 
+              autocomplete="current-password" 
+              required
+            >
+            <button type="button" class="pwd-toggle-btn" id="toggleLoginPwd" title="Show or hide password">👁️</button>
           </div>
-          <small class="field-error" data-error-for="paymentStatus"></small>
-
-          <div class="field payment-notes">
-            <label for="notes">Notes</label>
-            <textarea id="notes" name="notes" rows="3" placeholder="Add any payment or booking notes (optional)"></textarea>
-            <small class="field-error" data-error-for="notes"></small>
-          </div>
+          <small class="field-error" id="loginPasswordError"></small>
         </div>
 
-        <div id="formMessage" class="message hidden" role="alert"></div>
+        <div class="auth-options-row">
+          <label class="remember-option">
+            <input type="checkbox" id="rememberMe" checked>
+            <span>Keep me signed in</span>
+          </label>
+        </div>
 
-        <div class="actions">
-          <button type="submit" class="primary-btn" id="saveBookingBtn">Save Booking</button>
-          <button type="button" class="print-btn hidden" id="printBookingBtn">Print Last Booking</button>
+        <button type="submit" class="auth-submit-btn" id="loginSubmitBtn">
+          <span class="btn-text">Sign In</span>
+        </button>
+
+        <div class="auth-switch-prompt">
+          <span>Don't have an account?</span>
+          <button type="button" class="auth-link-btn" id="linkToSignup">Create Account</button>
         </div>
       </form>
-    </section>
 
-    <section class="summary-grid">
-      <div class="summary-card">
-        <span>Today's Bookings</span>
-        <strong id="summaryTodayCount">0</strong>
-      </div>
-      <div class="summary-card">
-        <span>Today's Sponsorship</span>
-        <strong id="summaryTodayAmount">₹0</strong>
-      </div>
-      <div class="summary-card">
-        <span>Paid</span>
-        <strong id="summaryPaidAmount">₹0</strong>
-      </div>
-      <div class="summary-card">
-        <span>Pending</span>
-        <strong id="summaryPendingAmount">₹0</strong>
-      </div>
-    </section>
+      <!-- CREATE ACCOUNT FORM -->
+      <form id="authSignupForm" class="hidden" novalidate>
+        <div class="auth-field">
+          <label for="signupName">Full Name</label>
+          <div class="input-icon-group">
+            <span class="input-icon">👤</span>
+            <input 
+              id="signupName" 
+              name="name" 
+              type="text" 
+              placeholder="Enter your full name" 
+              autocomplete="name" 
+              required
+            >
+          </div>
+          <small class="field-error" id="signupNameError"></small>
+        </div>
 
-    <section class="card table-card">
-      <div class="section-title">
-        <div>
-          <h2>Recent Bookings</h2>
-          <p>Latest bookings stored in Google Sheets.</p>
+        <div class="auth-field">
+          <label for="signupEmail">Email Address</label>
+          <div class="input-icon-group">
+            <span class="input-icon">✉️</span>
+            <input 
+              id="signupEmail" 
+              name="email" 
+              type="email" 
+              placeholder="Enter your email address" 
+              autocomplete="email" 
+              required
+            >
+          </div>
+          <small class="field-error" id="signupEmailError"></small>
         </div>
-        <button type="button" class="secondary-btn" id="refreshBookingsBtn">Refresh</button>
+
+        <div class="auth-field">
+          <label for="signupPassword">Password</label>
+          <div class="input-icon-group">
+            <span class="input-icon">🔒</span>
+            <input 
+              id="signupPassword" 
+              name="password" 
+              type="password" 
+              placeholder="Minimum 6 characters" 
+              autocomplete="new-password" 
+              minlength="6" 
+              required
+            >
+            <button type="button" class="pwd-toggle-btn" id="toggleSignupPwd" title="Show or hide password">👁️</button>
+          </div>
+          <small class="field-error" id="signupPasswordError"></small>
+        </div>
+
+        <div class="auth-field">
+          <label for="signupConfirmPassword">Confirm Password</label>
+          <div class="input-icon-group">
+            <span class="input-icon">🔒</span>
+            <input 
+              id="signupConfirmPassword" 
+              name="confirmPassword" 
+              type="password" 
+              placeholder="Re-enter password" 
+              autocomplete="new-password" 
+              minlength="6" 
+              required
+            >
+          </div>
+          <small class="field-error" id="signupConfirmPasswordError"></small>
+        </div>
+
+        <button type="submit" class="auth-submit-btn" id="signupSubmitBtn">
+          <span class="btn-text">Create Account</span>
+        </button>
+
+        <div class="auth-switch-prompt">
+          <span>Already have an account?</span>
+          <button type="button" class="auth-link-btn" id="linkToSignin">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 2. MAIN WEBSITE / DASHBOARD VIEW (Shown after login)         -->
+  <!-- ============================================================ -->
+  <div id="appView" class="app-page-wrapper hidden">
+    <!-- Main App Navigation Header -->
+    <header class="site-header">
+      <div class="brand">
+        <img class="brand-logo" src="Sarvam Logo.png" alt="Sarvam logo">
+        <div class="brand-title-wrap">
+          <h1>சர்வம் அன்ன சத்திரம்</h1>
+          <p>Food Sponsorship Management</p>
+        </div>
+        <img class="brand-logo" src="Logo.png" alt="Partner logo">
       </div>
 
-      <div class="filters">
-        <div class="field">
-          <label for="filterDate">Date</label>
-          <input id="filterDate" type="date">
-        </div>
-        <div class="field">
-          <label for="filterSession">Food Session</label>
-          <select id="filterSession">
-            <option value="All">All</option>
-            <option value="Breakfast">Breakfast</option>
-            <option value="Lunch">Lunch</option>
-            <option value="Dinner">Dinner</option>
-            <option value="Twice">Twice</option>
-            <option value="Whole Day">Whole Day</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="filterStatus">Payment Status</label>
-          <select id="filterStatus">
-            <option value="All">All</option>
-            <option value="Paid">Paid</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="searchBookings">Search</label>
-          <input id="searchBookings" type="search" placeholder="Sponsor, phone or Booking ID">
+      <!-- TODAY'S SPONSOR TICKER -->
+      <div class="ts-ticker-bar" id="todaysSponsorBar" aria-live="polite">
+        <span class="ts-ticker-label">★ Today's Sponsor:</span>
+        <div class="ts-ticker-track">
+          <span class="ts-ticker-content" id="todaysSponsorContent">Loading today's sponsorship details…</span>
         </div>
       </div>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Booking ID</th>
-              <th>Sponsor Name</th>
-              <th>Sponsor For</th>
-              <th>Date</th>
-              <th>Food Session</th>
-              <th>Amount</th>
-              <th>Place</th>
-              <th>Volunteer</th>
-              <th>Payment Status</th>
-              <th>Notes</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="bookingsTableBody">
-            <tr class="skeleton-row">
-              <td colspan="11" class="empty-state loading-cell">
-                <span class="skeleton-line"></span>
-                <span class="skeleton-line"></span>
-                <span class="skeleton-line"></span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Logged-in User Account Toolbar -->
+      <div class="access-bar">
+        <div class="user-profile-badge">
+          <span class="user-avatar-icon">👤</span>
+          <div class="user-meta-info">
+            <strong id="headerUserName" class="user-display-name">Sarvam User</strong>
+            <span id="accessStatus" class="access-status">Editor Access</span>
+          </div>
+        </div>
+        <button type="button" class="logout-btn" id="logoutBtn" title="Sign out of your account">
+          <span>Sign Out</span> 🚪
+        </button>
       </div>
-    </section>
-  </main>
+    </header>
 
+    <!-- APP PAGE NAVIGATION -->
+    <nav class="app-page-nav" id="appPageNav">
+      <button class="app-nav-btn editor-only active" id="navDashboard" onclick="switchPage('dashboard')">🏠 Dashboard</button>
+      <button class="app-nav-btn" id="navBookings" onclick="switchPage('bookings')">📋 Bookings</button>
+      <button class="app-nav-btn" id="navCalendar" onclick="switchPage('calendar')">📅 Calendar</button>
+    </nav>
+
+    <main class="container">
+
+      <!-- ══════════════════════════════════════════ -->
+      <!-- PAGE: DASHBOARD (editor only)              -->
+      <!-- ══════════════════════════════════════════ -->
+      <div id="pageDashboard" class="app-page editor-only">
+
+        <!-- FOOD SPONSORSHIP ENTRY FORM CARD -->
+        <section class="card booking-card">
+          <div class="section-title">
+            <div>
+              <h2>Food Sponsorship Booking</h2>
+              <p>Enter the sponsor and food session details below.</p>
+            </div>
+          </div>
+
+          <form id="bookingForm" novalidate>
+            <div class="form-grid">
+              <div class="field">
+                <label for="sponsorName">Sponsor Name <span>*</span></label>
+                <input id="sponsorName" name="sponsorName" type="text" placeholder="Enter sponsor name" autocomplete="name" required>
+                <small class="field-error" data-error-for="sponsorName"></small>
+              </div>
+
+              <div class="field">
+                <label for="sponsorFor">Sponsor For <span>*</span></label>
+                <input id="sponsorFor" name="sponsorFor" type="text" placeholder="Person / family name" required>
+                <small class="field-error" data-error-for="sponsorFor"></small>
+              </div>
+
+              <div class="field">
+                <label for="phone">Phone Number <span>*</span></label>
+                <input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="10-digit mobile number" maxlength="13" required>
+                <small class="field-error" data-error-for="phone"></small>
+              </div>
+
+              <div class="field">
+                <label for="occasion">Occasion <span>*</span></label>
+                <div class="input-with-button">
+                  <select id="occasion" name="occasion" required>
+                    <option value="">Select Occasion</option>
+                  </select>
+                  <button type="button" class="secondary-btn" id="openOccasionModalBtn">+ Add</button>
+                </div>
+                <small class="field-error" data-error-for="occasion"></small>
+              </div>
+
+              <div class="field">
+                <label for="sponsorshipDate">Sponsorship Date <span>*</span></label>
+                <input id="sponsorshipDate" name="sponsorshipDate" type="date" required>
+                <small class="field-error" data-error-for="sponsorshipDate"></small>
+              </div>
+
+              <div class="field">
+                <label for="foodSession">Food Session <span>*</span></label>
+                <select id="foodSession" name="foodSession" required>
+                  <option value="">Select Food Session</option>
+                  <option value="Breakfast">Breakfast</option>
+                  <option value="Lunch">Lunch</option>
+                  <option value="Dinner">Dinner</option>
+                  <option value="Twice">Twice</option>
+                  <option value="Whole Day">Whole Day</option>
+                </select>
+                <small class="field-error" data-error-for="foodSession"></small>
+              </div>
+
+              <div class="field">
+                <label for="amount">Sponsorship Amount (₹) <span>*</span></label>
+                <div class="currency-input">
+                  <span>₹</span>
+                  <input id="amount" name="amount" type="number" min="1" step="1" placeholder="Enter amount" required>
+                </div>
+                <small class="field-error" data-error-for="amount"></small>
+              </div>
+
+              <div class="field">
+                <label for="place">Place / City</label>
+                <input id="place" name="place" type="text" placeholder="e.g. Thiruvannamalai">
+                <small class="field-error" data-error-for="place"></small>
+              </div>
+
+              <div class="field">
+                <label for="volunteer">Volunteer <span>*</span></label>
+                <div class="input-with-button">
+                  <select id="volunteer" name="volunteer" required>
+                    <option value="">Select Volunteer</option>
+                  </select>
+                  <button type="button" class="secondary-btn" id="openVolunteerModalBtn">+ Add</button>
+                </div>
+                <small class="field-error" data-error-for="volunteer"></small>
+              </div>
+            </div>
+
+            <div class="payment-section">
+              <label>Payment Status <span>*</span></label>
+              <div class="payment-toggle">
+                <label class="payment-option">
+                  <input type="radio" name="paymentStatus" value="Paid">
+                  <span>Paid</span>
+                </label>
+                <label class="payment-option">
+                  <input type="radio" name="paymentStatus" value="Pending">
+                  <span>Pending</span>
+                </label>
+              </div>
+              <small class="field-error" data-error-for="paymentStatus"></small>
+
+              <div class="field payment-notes">
+                <label for="notes">Notes / Special Instructions</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Add any payment notes or dietary requests (optional)"></textarea>
+                <small class="field-error" data-error-for="notes"></small>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="primary-btn" id="saveBookingBtn">Save Booking</button>
+              <button type="button" class="print-btn hidden" id="printBookingBtn">Print Last Booking</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- TODAY'S METRICS SUMMARY -->
+        <section class="summary-grid">
+          <div class="summary-card">
+            <span>Today's Bookings</span>
+            <strong id="summaryTodayCount">0</strong>
+          </div>
+          <div class="summary-card">
+            <span>Today's Total Amount</span>
+            <strong id="summaryTodayAmount">₹0</strong>
+          </div>
+          <div class="summary-card">
+            <span>Paid Collections</span>
+            <strong id="summaryPaidAmount">₹0</strong>
+          </div>
+          <div class="summary-card">
+            <span>Pending Collections</span>
+            <strong id="summaryPendingAmount">₹0</strong>
+          </div>
+        </section>
+
+        <!-- RECENT BOOKINGS TABLE CARD -->
+        <section class="card table-card">
+          <div class="section-title">
+            <div>
+              <h2>Recent Sponsorship Bookings</h2>
+              <p>Direct live data synchronized from Google Sheets.</p>
+            </div>
+            <div class="section-actions">
+              <button type="button" class="secondary-btn" id="refreshBookingsBtn">🔄 Refresh</button>
+              <button type="button" class="secondary-btn" id="exportBookingsBtn">📥 Download CSV</button>
+            </div>
+          </div>
+
+          <div class="filters">
+            <div class="field">
+              <label for="filterDate">Filter Date</label>
+              <input id="filterDate" type="date">
+            </div>
+            <div class="field">
+              <label for="filterSession">Food Session</label>
+              <select id="filterSession">
+                <option value="All">All Sessions</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Twice">Twice</option>
+                <option value="Whole Day">Whole Day</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filterStatus">Payment Status</label>
+              <select id="filterStatus">
+                <option value="All">All Statuses</option>
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="searchBookings">Search Bookings</label>
+              <input id="searchBookings" type="search" placeholder="Sponsor, phone or Booking ID">
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Sponsor Name</th>
+                  <th>Sponsor For</th>
+                  <th>Date</th>
+                  <th>Food Session</th>
+                  <th>Amount</th>
+                  <th>Place</th>
+                  <th>Volunteer</th>
+                  <th>Payment Status</th>
+                  <th>Notes</th>
+                  <th>Receipt</th>
+                </tr>
+              </thead>
+              <tbody id="bookingsTableBody">
+                <tr class="skeleton-row">
+                  <td colspan="11" class="empty-state loading-cell">
+                    <span class="skeleton-line"></span>
+                    <span class="skeleton-line"></span>
+                    <span class="skeleton-line"></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ══════════════════════════════════════════ -->
+      <!-- PAGE: BOOKINGS LIST (all users)            -->
+      <!-- ══════════════════════════════════════════ -->
+      <div id="pageBookings" class="app-page hidden">
+        <section class="card">
+          <div class="section-title">
+            <div>
+              <h2>📋 All Sponsorship Bookings</h2>
+              <p>Filter by month and year to view records.</p>
+            </div>
+          </div>
+
+          <div class="bl-filters">
+            <div class="field">
+              <label for="blFilterMonth">Month</label>
+              <select id="blFilterMonth">
+                <option value="0">All Months</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="blFilterYear">Year</label>
+              <select id="blFilterYear">
+                <option value="0">All Years</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="blSearch">Search</label>
+              <input id="blSearch" type="search" placeholder="Sponsor name, phone…">
+            </div>
+          </div>
+
+          <div class="bl-summary" id="blSummary">Showing all bookings</div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Date</th>
+                  <th>Sponsor Name</th>
+                  <th>Sponsor For</th>
+                  <th>Food Session</th>
+                  <th>Amount (₹)</th>
+                  <th>Payment</th>
+                  <th>Occasion</th>
+                  <th>Place</th>
+                  <th>Receipt</th>
+                </tr>
+              </thead>
+              <tbody id="blTableBody">
+                <tr><td colspan="10" class="empty-state">Loading bookings…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ══════════════════════════════════════════ -->
+      <!-- PAGE: CALENDAR (all users)                 -->
+      <!-- ══════════════════════════════════════════ -->
+      <div id="pageCalendar" class="app-page hidden">
+        <section class="card cal-page-card">
+          <div class="section-title cal-title-row">
+            <div>
+              <h2>📅 Sponsorship Calendar</h2>
+              <p>Scheduled food sponsorships for each day.</p>
+            </div>
+            <div class="cal-nav">
+              <button class="secondary-btn" id="calPrevBtn">‹ Prev</button>
+              <span id="calMonthLabel" class="cal-month-label">August 2026</span>
+              <button class="secondary-btn" id="calNextBtn">Next ›</button>
+            </div>
+          </div>
+          <div class="cal-layout-container">
+            <div class="calendar-grid-wrap">
+              <div class="cal-day-headers">
+                <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+              </div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+            <div class="cal-details-panel" id="calDetailsPanel">
+              <h3 id="calDetailsTitle">Sponsorship Details</h3>
+              <div id="calDetailsContent" class="cal-details-content">
+                <p class="cal-details-placeholder">Click any date in the calendar to view bookings.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 3. MODALS (Occasion & Volunteer)                             -->
+  <!-- ============================================================ -->
   <div class="modal hidden" id="occasionModal" aria-hidden="true">
     <div class="modal-box">
-      <button class="modal-close" type="button" data-close="occasionModal">&times;</button>
+      <button class="modal-close" type="button" data-close="occasionModal" aria-label="Close">&times;</button>
       <h3>Add Occasion</h3>
       <form id="occasionForm">
         <label for="newOccasionName">Occasion Name</label>
-        <input id="newOccasionName" type="text" placeholder="e.g. Housewarming" required>
+        <input id="newOccasionName" type="text" placeholder="e.g. Housewarming, Sashtiapthapoorthi" required>
         <small class="field-error" data-error-for="newOccasionName"></small>
         <button class="primary-btn" type="submit">Add Occasion</button>
       </form>
@@ -248,7 +557,7 @@
 
   <div class="modal hidden" id="volunteerModal" aria-hidden="true">
     <div class="modal-box">
-      <button class="modal-close" type="button" data-close="volunteerModal">&times;</button>
+      <button class="modal-close" type="button" data-close="volunteerModal" aria-label="Close">&times;</button>
       <h3>Add Volunteer</h3>
       <form id="volunteerForm">
         <label for="newVolunteerName">Volunteer Name</label>
